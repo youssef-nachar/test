@@ -1101,8 +1101,21 @@ let newOrders = Object.values(map).map(o => {
     };
 });
 
-        const newHash = hashData(newOrders);
-        if (!force && dataCache && newHash === lastDataHash) return;
+      const newHash = hashData(newOrders);
+
+// 🚫 لا تسمح بالرجوع لبيانات أقدم
+if (!force && dataCache) {
+
+    // لو نفس البيانات → لا تحدث
+    if (newHash === lastDataHash) return;
+
+    // لو البيانات الجديدة أقل من القديمة → تجاهلها
+    if (newOrders.length < dataCache.length) {
+        console.log("⛔ Ignored older cached data");
+        return;
+    }
+}
+
 
         // إشعار بالطلبات الجديدة
         if (dataCache && newOrders.length > dataCache.length) {
